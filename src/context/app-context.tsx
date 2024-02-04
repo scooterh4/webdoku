@@ -28,6 +28,7 @@ export type State = {
 type API = {
   selectCell: (location: CellLocation) => void
   getNewGame: () => void
+  keyboardButtonClicked: (number: number) => void
 }
 
 const PuzzleContext = createContext<State["puzzle"]>({} as State["puzzle"])
@@ -70,7 +71,6 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
 
   const api = useMemo(() => {
     const selectCell = (location: CellLocation) => {
-      console.log("updating selected cell to", location)
       dispatch({ type: "selectCell", location })
     }
 
@@ -86,7 +86,11 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
         })
     }
 
-    return { selectCell, getNewGame }
+    const keyboardButtonClicked = (number: number) => {
+      dispatch({ type: "keyboardButtonClicked", value: number })
+    }
+
+    return { selectCell, getNewGame, keyboardButtonClicked }
   }, [])
 
   return (

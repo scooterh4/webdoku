@@ -5,6 +5,7 @@ export type Actions =
   | { type: "selectCell"; location: CellLocation }
   | { type: "setNewGame"; data: NewPuzzleData }
   | { type: "setLoading"; loading: boolean }
+  | { type: "keyboardButtonClicked"; value: number }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -42,6 +43,22 @@ export const reducer = (state: State, action: Actions): State => {
       return {
         ...state,
         loading: action.loading,
+      }
+
+    case "keyboardButtonClicked":
+      const puzzle = state.puzzle.map((row) =>
+        row.map((cell) => {
+          // cannot change prefilled cells
+          if (cell.isSelected && !cell.prefilled) {
+            return { ...cell, value: action.value }
+          }
+          return cell // Return other cells as-is
+        })
+      )
+
+      return {
+        ...state,
+        puzzle: puzzle,
       }
 
     default:

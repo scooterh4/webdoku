@@ -7,13 +7,10 @@ const Board: React.FC = () => {
   const puzzle = usePuzzleContext()
   const loading = useLoadingContext()
 
-  console.log("board render")
-
   return loading ? (
     <div>Loading...</div>
   ) : (
-    <div className="sudoku-board">
-      This is the board
+    <div>
       {puzzle.map((row, rowIndex) => (
         <Grid container direction="row" display={"flex"}>
           {row.map((cellData, colIndex) => (
