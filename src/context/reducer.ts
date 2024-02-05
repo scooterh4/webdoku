@@ -6,6 +6,7 @@ export type Actions =
   | { type: "setNewGame"; data: NewPuzzleData }
   | { type: "setLoading"; loading: boolean }
   | { type: "keyboardButtonClicked"; value: number }
+  | { type: "eraseSelectedCell" }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -59,6 +60,21 @@ export const reducer = (state: State, action: Actions): State => {
       return {
         ...state,
         puzzle: puzzle,
+      }
+
+    case "eraseSelectedCell":
+      const newPuzz = state.puzzle.map((row) =>
+        row.map((cell) => {
+          if (cell.isSelected && !cell.prefilled) {
+            return { ...cell, value: 0 } // Set value to zero
+          }
+          return cell // Return other cells as-is
+        })
+      )
+
+      return {
+        ...state,
+        puzzle: newPuzz,
       }
 
     default:

@@ -29,6 +29,7 @@ type API = {
   selectCell: (location: CellLocation) => void
   getNewGame: () => void
   keyboardButtonClicked: (number: number) => void
+  eraseSelectedCell: () => void
 }
 
 const PuzzleContext = createContext<State["puzzle"]>({} as State["puzzle"])
@@ -90,7 +91,11 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch({ type: "keyboardButtonClicked", value: number })
     }
 
-    return { selectCell, getNewGame, keyboardButtonClicked }
+    const eraseSelectedCell = () => {
+      dispatch({ type: "eraseSelectedCell" })
+    }
+
+    return { selectCell, getNewGame, keyboardButtonClicked, eraseSelectedCell }
   }, [])
 
   return (
