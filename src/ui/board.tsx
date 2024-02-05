@@ -12,7 +12,12 @@ const Board: React.FC = () => {
   ) : (
     <div>
       {puzzle.map((row, rowIndex) => (
-        <Grid container direction="row" display={"flex"}>
+        <Grid
+          key={`row-${rowIndex}`}
+          container
+          direction="row"
+          display={"flex"}
+        >
           {row.map((cellData, colIndex) => (
             <Cell key={`${rowIndex}-${colIndex}`} cellData={cellData} />
           ))}

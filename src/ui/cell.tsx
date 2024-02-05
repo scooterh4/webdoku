@@ -34,6 +34,7 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
       <Typography
         color={cellData.value === 0 ? "transparent" : "black"}
         visibility={cellData.value === 0 ? "hidden" : "visible"}
+        fontSize={"24pt"}
       >
         {cellData.value}
       </Typography>
@@ -59,6 +60,8 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
       style={{
         cursor: "pointer",
         backgroundColor: cellData.isSelected
+          ? "gold"
+          : cellData.isPeer
           ? "lightblue"
           : cellData.prefilled
           ? "lightgray"
