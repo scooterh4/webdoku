@@ -23,6 +23,7 @@ export type State = {
   solution: number[][]
   selectedCell: CellLocation | null
   loading: boolean
+  makeNotes: boolean
 }
 
 type API = {
@@ -30,6 +31,7 @@ type API = {
   getNewGame: () => void
   keyboardButtonClicked: (number: number) => void
   eraseSelectedCell: () => void
+  setMakeNotes: () => void
 }
 
 const PuzzleContext = createContext<State["puzzle"]>({} as State["puzzle"])
@@ -38,6 +40,7 @@ const SolutionContext = createContext<State["solution"]>(
 )
 const SelectedCellContext = createContext<State["selectedCell"]>(null)
 const LoadingContext = createContext<State["loading"]>(false)
+const MakeNotesContext = createContext<State["makeNotes"]>(false)
 const APIContext = createContext<API>({} as API)
 
 export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
@@ -46,6 +49,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
     solution: [],
     selectedCell: null,
     loading: true,
+    makeNotes: false,
   })
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("fetching a new puzzle")
 
       try {
-        // dispatch({ type: "setLoading", loading: true }) // Ensure loading is true
+        dispatch({ type: "setLoading", loading: true }) // Ensure loading is true
 
         await fetchNewPuzzle().then((data) => {
           dispatch({ type: "setNewGame", data })
@@ -95,7 +99,17 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch({ type: "eraseSelectedCell" })
     }
 
-    return { selectCell, getNewGame, keyboardButtonClicked, eraseSelectedCell }
+    const setMakeNotes = () => {
+      dispatch({ type: "setMakeNotes" })
+    }
+
+    return {
+      selectCell,
+      getNewGame,
+      keyboardButtonClicked,
+      eraseSelectedCell,
+      setMakeNotes,
+    }
   }, [])
 
   return (
@@ -103,7 +117,9 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       <LoadingContext.Provider value={state.loading}>
         <PuzzleContext.Provider value={state.puzzle}>
           <SelectedCellContext.Provider value={state.selectedCell}>
-            {children}
+            <MakeNotesContext.Provider value={state.makeNotes}>
+              {children}
+            </MakeNotesContext.Provider>
           </SelectedCellContext.Provider>
         </PuzzleContext.Provider>
       </LoadingContext.Provider>
@@ -116,3 +132,4 @@ export const usePuzzleContext = () => useContext(PuzzleContext)
 export const useSolutionContext = () => useContext(SolutionContext)
 export const useSelectedCellContext = () => useContext(SelectedCellContext)
 export const useLoadingContext = () => useContext(LoadingContext)
+export const useMakeNotesContext = () => useContext(MakeNotesContext)

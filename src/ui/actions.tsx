@@ -1,7 +1,8 @@
 import React, { useState } from "react"
-import { useSudokuAPI } from "../context/app-context"
+import { useMakeNotesContext, useSudokuAPI } from "../context/app-context"
 import { Button } from "@mui/base"
 import {
+  Badge,
   Box,
   Dialog,
   DialogActions,
@@ -9,9 +10,11 @@ import {
   IconButton,
 } from "@mui/material"
 import BackspaceIcon from "@mui/icons-material/Backspace"
+import EditIcon from "@mui/icons-material/Edit"
 
 export default function Actions() {
-  const { getNewGame, eraseSelectedCell } = useSudokuAPI()
+  const { getNewGame, eraseSelectedCell, setMakeNotes } = useSudokuAPI()
+  const notesStatus = useMakeNotesContext()
   const [showDialog, setShowDialog] = useState<boolean>(false)
 
   function startNewGame() {
@@ -23,10 +26,23 @@ export default function Actions() {
     eraseSelectedCell()
   }
 
+  function callMakeNotes() {
+    setMakeNotes()
+  }
+
   return (
     <Box>
       <IconButton onClick={() => callEraseCell()}>
         <BackspaceIcon />
+      </IconButton>
+
+      <IconButton onClick={() => callMakeNotes()}>
+        <Badge
+          badgeContent={notesStatus ? "On" : "Off"}
+          color={notesStatus ? "success" : "secondary"}
+        >
+          <EditIcon />
+        </Badge>
       </IconButton>
 
       <Button onClick={() => setShowDialog(true)}>New game</Button>

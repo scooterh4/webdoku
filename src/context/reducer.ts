@@ -7,6 +7,7 @@ export type Actions =
   | { type: "setLoading"; loading: boolean }
   | { type: "keyboardButtonClicked"; value: number }
   | { type: "eraseSelectedCell" }
+  | { type: "setMakeNotes" }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -51,8 +52,30 @@ export const reducer = (state: State, action: Actions): State => {
         row.map((cell) => {
           // cannot change prefilled cells
           if (cell.isSelected && !cell.prefilled) {
-            return { ...cell, value: action.value }
+            if (state.makeNotes) {
+              let notes =
+                cell.value instanceof Set ? cell.value : new Set<number>()
+
+              console.log("notes", notes)
+
+              if (notes.has(action.value)) {
+                notes.delete(action.value)
+
+                console.log("notes after action", notes)
+
+                return { ...cell, value: notes }
+              } else {
+                notes.add(action.value)
+
+                console.log("notes after action", notes)
+
+                return { ...cell, value: notes }
+              }
+            } else {
+              return { ...cell, value: action.value }
+            }
           }
+
           return cell // Return other cells as-is
         })
       )
@@ -75,6 +98,14 @@ export const reducer = (state: State, action: Actions): State => {
       return {
         ...state,
         puzzle: newPuzz,
+      }
+
+    case "setMakeNotes":
+      const notes = !state.makeNotes
+      console.log("switch makeNotes to ", notes)
+      return {
+        ...state,
+        makeNotes: notes,
       }
 
     default:
