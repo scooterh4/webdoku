@@ -15,14 +15,23 @@ export const reducer = (state: State, action: Actions): State => {
       // Create a deep copy of the puzzle to ensure changes create a new reference
       const newPuzzle = state.puzzle.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
-          if (
-            (rowIndex === action.location.row &&
-              colIndex === action.location.col) ||
-            cell.isSelected
-          ) {
+          const isSelectedCell =
+            rowIndex === action.location.row && colIndex === action.location.col
+          const isPeer =
+            rowIndex === action.location.row || colIndex === action.location.col
+          const isPrev = cell.isPeer || cell.isSelected
+
+          if (isSelectedCell) {
             // Update isSelected for the selected cell
-            return { ...cell, isSelected: !cell.isSelected } // Toggle or set true as needed
+            return { ...cell, isSelected: true } // Toggle or set true as needed
           }
+          if (isPeer) {
+            return { ...cell, isSelected: false, isPeer: true }
+          }
+          if (isPrev) {
+            return { ...cell, isSelected: false, isPeer: false }
+          }
+
           return cell // Return other cells as-is
         })
       )
