@@ -61,7 +61,8 @@ export const reducer = (state: State, action: Actions): State => {
 
     case "keyboardButtonClicked": {
       const { selectedCell, puzzle, makeNotes } = state
-      if (!selectedCell) return state // No cell selected, nothing to update
+      if (!selectedCell || puzzle[selectedCell.row][selectedCell.col].prefilled)
+        return state // No cell selected, or its already a given cell, so nothing to update
 
       const updatedPuzzle: CellData[][] = puzzle.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
@@ -103,15 +104,11 @@ export const reducer = (state: State, action: Actions): State => {
             }
           }
 
-          // Flag peers only if not making notes and there's a definitive value input
+          // Flag conflicts only if not making notes and there's a definitive value input
           if (isPeer && !makeNotes) {
             let hasConflicts =
-              cell.value === action.value ||
-              (cell.value instanceof Set && cell.value.has(action.value))
-            return { ...cell, isPeer: true, hasConflicts: hasConflicts }
-          } else if (isPeer) {
-            // If making notes, still flag as peer but without conflicts
-            return { ...cell, isPeer: true, hasConflicts: false }
+              typeof cell.value === "number" && cell.value === action.value
+            return { ...cell, hasConflicts: hasConflicts }
           }
 
           return cell // Return other cells as-is
