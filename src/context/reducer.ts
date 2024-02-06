@@ -18,7 +18,10 @@ export const reducer = (state: State, action: Actions): State => {
           const isSelectedCell =
             rowIndex === action.location.row && colIndex === action.location.col
           const isPeer =
-            rowIndex === action.location.row || colIndex === action.location.col
+            rowIndex === action.location.row ||
+            colIndex === action.location.col ||
+            (Math.floor(rowIndex / 3) === Math.floor(action.location.row / 3) &&
+              Math.floor(colIndex / 3) === Math.floor(action.location.col / 3))
           const isPrev = cell.isPeer || cell.isSelected
 
           if (isSelectedCell) {
