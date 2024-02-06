@@ -105,7 +105,7 @@ export const reducer = (state: State, action: Actions): State => {
           }
 
           // Flag conflicts only if not making notes and there's a definitive value input
-          if (isPeer && !makeNotes) {
+          if (isPeer && !makeNotes && state.showConflicts) {
             let hasConflicts =
               typeof cell.value === "number" && cell.value === action.value
             return { ...cell, hasConflicts: hasConflicts }
