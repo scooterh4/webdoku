@@ -59,7 +59,9 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
       alignItems="center"
       style={{
         cursor: "pointer",
-        backgroundColor: cellData.isSelected
+        backgroundColor: cellData.hasConflicts
+          ? "lightsalmon"
+          : cellData.isSelected
           ? "gold"
           : cellData.isPeer
           ? "lightblue"

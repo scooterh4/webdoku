@@ -22,6 +22,7 @@ export async function fetchNewPuzzle(): Promise<NewPuzzleData> {
       prefilled: false,
       isPeer: false,
       isSelected: false,
+      hasConflicts: false,
     }))
   )
 
@@ -35,8 +36,6 @@ export async function fetchNewPuzzle(): Promise<NewPuzzleData> {
       const resPuzzle = data.newboard.grids[0].value
       const resSolution = data.newboard.grids[0].solution
 
-      console.log("this is the puzzle", resPuzzle)
-
       // Update the puzzle
       for (let i = 0; i < resPuzzle.length; i++) {
         for (let j = 0; j < resPuzzle[i].length; j++) {
@@ -46,6 +45,7 @@ export async function fetchNewPuzzle(): Promise<NewPuzzleData> {
             prefilled: resPuzzle[i][j] !== 0,
             isPeer: false,
             isSelected: false,
+            hasConflicts: false,
           }
         }
       }

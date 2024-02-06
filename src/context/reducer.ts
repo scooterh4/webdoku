@@ -1,4 +1,4 @@
-import { CellLocation, State } from "./app-context"
+import { CellData, CellLocation, State } from "./app-context"
 import { NewPuzzleData } from "./fetch-new-puzzle"
 
 export type Actions =
@@ -56,33 +56,59 @@ export const reducer = (state: State, action: Actions): State => {
         loading: action.loading,
       }
 
-    case "keyboardButtonClicked":
-      const puzzle = state.puzzle.map((row) =>
-        row.map((cell) => {
-          // cannot change prefilled cells
-          if (cell.isSelected && !cell.prefilled) {
-            if (state.makeNotes) {
+    case "keyboardButtonClicked": {
+      const { selectedCell, puzzle, makeNotes } = state
+      if (!selectedCell) return state // No cell selected, nothing to update
+
+      const updatedPuzzle: CellData[][] = puzzle.map((row, rowIndex) =>
+        row.map((cell, colIndex) => {
+          // Determine if the cell is a peer (same row, column, or 3x3 grid)
+          const isInSameRowOrCol =
+            rowIndex === selectedCell.row || colIndex === selectedCell.col
+          const isInSameGrid =
+            Math.floor(rowIndex / 3) === Math.floor(selectedCell.row / 3) &&
+            Math.floor(colIndex / 3) === Math.floor(selectedCell.col / 3)
+
+          const isPeer = isInSameRowOrCol || isInSameGrid
+
+          // Update the selected cell
+          if (
+            rowIndex === selectedCell.row &&
+            colIndex === selectedCell.col &&
+            !cell.prefilled
+          ) {
+            if (makeNotes) {
               let notes =
                 cell.value instanceof Set ? cell.value : new Set<number>()
-
-              console.log("notes", notes)
-
-              if (notes.has(action.value)) {
-                notes.delete(action.value)
-
-                console.log("notes after action", notes)
-
-                return { ...cell, value: notes }
-              } else {
-                notes.add(action.value)
-
-                console.log("notes after action", notes)
-
-                return { ...cell, value: notes }
+              notes.has(action.value)
+                ? notes.delete(action.value)
+                : notes.add(action.value)
+              return {
+                ...cell,
+                value: notes,
+                isPeer: false, // Reset peer and conflict flags if needed
+                hasConflicts: false,
               }
             } else {
-              return { ...cell, value: action.value }
+              // Direct value input (not making notes)
+              return {
+                ...cell,
+                value: action.value,
+                isPeer: false,
+                hasConflicts: false, // Reset flags
+              }
             }
+          }
+
+          // Flag peers only if not making notes and there's a definitive value input
+          if (isPeer && !makeNotes) {
+            let hasConflicts =
+              cell.value === action.value ||
+              (cell.value instanceof Set && cell.value.has(action.value))
+            return { ...cell, isPeer: true, hasConflicts: hasConflicts }
+          } else if (isPeer) {
+            // If making notes, still flag as peer but without conflicts
+            return { ...cell, isPeer: true, hasConflicts: false }
           }
 
           return cell // Return other cells as-is
@@ -91,8 +117,9 @@ export const reducer = (state: State, action: Actions): State => {
 
       return {
         ...state,
-        puzzle: puzzle,
+        puzzle: updatedPuzzle,
       }
+    }
 
     case "eraseSelectedCell":
       const newPuzz = state.puzzle.map((row) =>

@@ -16,6 +16,7 @@ export interface CellData {
   prefilled: boolean
   isPeer: boolean
   isSelected: boolean
+  hasConflicts: boolean
 }
 
 export type State = {
@@ -24,6 +25,7 @@ export type State = {
   selectedCell: CellLocation | null
   loading: boolean
   makeNotes: boolean
+  showConflicts: boolean
 }
 
 type API = {
@@ -41,6 +43,7 @@ const SolutionContext = createContext<State["solution"]>(
 const SelectedCellContext = createContext<State["selectedCell"]>(null)
 const LoadingContext = createContext<State["loading"]>(false)
 const MakeNotesContext = createContext<State["makeNotes"]>(false)
+const ShowConflictsContext = createContext<State["showConflicts"]>(true)
 const APIContext = createContext<API>({} as API)
 
 export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
@@ -50,6 +53,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
     selectedCell: null,
     loading: true,
     makeNotes: false,
+    showConflicts: true,
   })
 
   useEffect(() => {
@@ -118,7 +122,9 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
         <PuzzleContext.Provider value={state.puzzle}>
           <SelectedCellContext.Provider value={state.selectedCell}>
             <MakeNotesContext.Provider value={state.makeNotes}>
-              {children}
+              <ShowConflictsContext.Provider value={state.showConflicts}>
+                {children}
+              </ShowConflictsContext.Provider>
             </MakeNotesContext.Provider>
           </SelectedCellContext.Provider>
         </PuzzleContext.Provider>
@@ -133,3 +139,4 @@ export const useSolutionContext = () => useContext(SolutionContext)
 export const useSelectedCellContext = () => useContext(SelectedCellContext)
 export const useLoadingContext = () => useContext(LoadingContext)
 export const useMakeNotesContext = () => useContext(MakeNotesContext)
+export const useShowConflictsContext = () => useContext(ShowConflictsContext)
