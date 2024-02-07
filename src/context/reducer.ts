@@ -108,7 +108,10 @@ export const reducer = (state: State, action: Actions): State => {
           if (isPeer && !makeNotes && state.showConflicts) {
             let hasConflicts =
               typeof cell.value === "number" && cell.value === action.value
-            return { ...cell, hasConflicts: hasConflicts }
+
+            if (hasConflicts) {
+              return { ...cell, hasConflicts: hasConflicts }
+            }
           }
 
           return cell // Return other cells as-is
@@ -122,12 +125,46 @@ export const reducer = (state: State, action: Actions): State => {
     }
 
     case "eraseSelectedCell":
-      const newPuzz = state.puzzle.map((row) =>
-        row.map((cell) => {
-          if (cell.isSelected && !cell.prefilled) {
-            return { ...cell, value: 0 } // Set value to zero
+      const { selectedCell, puzzle } = state
+
+      // Ensure we have a selected cell and it's not prefilled
+      if (
+        !selectedCell ||
+        puzzle[selectedCell.row][selectedCell.col].prefilled
+      ) {
+        return state // Return the current state if there's no selected cell or it's prefilled
+      }
+
+      const selectedCellData = puzzle[selectedCell.row][selectedCell.col]
+
+      // Create a new puzzle array with the selected cell's value set to 0 (or null, if you prefer to indicate an empty cell)
+      const newPuzz = puzzle.map((row, rowIndex) =>
+        row.map((cell, colIndex) => {
+          if (rowIndex === selectedCell.row && colIndex === selectedCell.col) {
+            return {
+              ...cell,
+              value: 0,
+            } // Reset cell properties as needed
           }
-          return cell // Return other cells as-is
+
+          // Need to make the isPeer logic into its own function
+          const isInSameRowOrCol =
+            rowIndex === selectedCell.row || colIndex === selectedCell.col
+          const isInSameGrid =
+            Math.floor(rowIndex / 3) === Math.floor(selectedCell.row / 3) &&
+            Math.floor(colIndex / 3) === Math.floor(selectedCell.col / 3)
+          const isPeer = isInSameRowOrCol || isInSameGrid
+
+          // Check if the cell is a peer and had conflicts with the selected cell
+          if (
+            isPeer &&
+            cell.hasConflicts &&
+            cell.value === selectedCellData.value
+          ) {
+            return { ...cell, hasConflicts: false } // remove formerly conflicting cells
+          }
+
+          return cell
         })
       )
 
