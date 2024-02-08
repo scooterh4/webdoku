@@ -17,6 +17,7 @@ export interface CellData {
   isPeer: boolean
   isSelected: boolean
   hasConflicts: boolean
+  isCorrect: boolean | null
 }
 
 export type State = {
@@ -36,6 +37,7 @@ type API = {
   eraseSelectedCell: () => void
   setMakeNotes: () => void
   setShowConflicts: (value: boolean) => void
+  checkSelectedCell: () => void
   revealSelectedCell: () => void
 }
 
@@ -116,6 +118,10 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch({ type: "setShowConflicts", value })
     }
 
+    const checkSelectedCell = () => {
+      dispatch({ type: "checkSelectedCell" })
+    }
+
     const revealSelectedCell = () => {
       dispatch({ type: "revealSelectedCell" })
     }
@@ -127,6 +133,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       eraseSelectedCell,
       setMakeNotes,
       setShowConflicts,
+      checkSelectedCell,
       revealSelectedCell,
     }
   }, [])

@@ -9,6 +9,7 @@ export type Actions =
   | { type: "eraseSelectedCell" }
   | { type: "setMakeNotes" }
   | { type: "setShowConflicts"; value: boolean }
+  | { type: "checkSelectedCell" }
   | { type: "revealSelectedCell" }
 
 export const reducer = (state: State, action: Actions): State => {
@@ -96,6 +97,7 @@ export const reducer = (state: State, action: Actions): State => {
                 value: notes,
                 isPeer: false, // Reset peer and conflict flags if needed
                 hasConflicts: false,
+                isCorrect: null,
               }
             } else {
               // Direct value input (not making notes)
@@ -104,6 +106,7 @@ export const reducer = (state: State, action: Actions): State => {
                 value: action.value,
                 isPeer: false,
                 hasConflicts: false, // Reset flags
+                isCorrect: null,
               }
             }
           }
@@ -115,11 +118,11 @@ export const reducer = (state: State, action: Actions): State => {
 
             if (hasConflicts) {
               selectedCellHasConflicts = true
-              return { ...cell, hasConflicts: hasConflicts }
+              return { ...cell, hasConflicts: hasConflicts, isCorrect: null }
             }
           }
 
-          return cell // Return other cells as-is
+          return { ...cell, isCorrect: null } // Return other cells as-is
         })
       )
 
@@ -155,6 +158,7 @@ export const reducer = (state: State, action: Actions): State => {
               ...cell,
               value: 0,
               hasConflicts: false,
+              isCorrect: null,
             } // Reset cell properties as needed
           }
 
@@ -193,6 +197,24 @@ export const reducer = (state: State, action: Actions): State => {
 
     case "setShowConflicts":
       return { ...state, showConflicts: action.value }
+
+    case "checkSelectedCell":
+      if (!state.selectedCell) return state
+
+      const cellAnswer =
+        state.solution[state.selectedCell.row][state.selectedCell.col]
+
+      const anotherPuzzle = state.puzzle.map((row) =>
+        row.map((cell) => {
+          if (cell.location === state.selectedCell) {
+            return { ...cell, isCorrect: cell.value === cellAnswer }
+          }
+
+          return cell
+        })
+      )
+
+      return { ...state, puzzle: anotherPuzzle }
 
     case "revealSelectedCell":
       const cellOfInterest = state.selectedCell

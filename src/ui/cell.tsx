@@ -55,6 +55,20 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
     <Typography visibility={"hidden"}>0</Typography>
   )
 
+  const backgroundColor =
+    revealCell || cellData.isCorrect
+      ? "lightgreen"
+      : (cellData.hasConflicts && showConflicts) ||
+        (typeof cellData.isCorrect === "boolean" && !cellData.isCorrect)
+      ? "lightsalmon"
+      : cellData.isSelected
+      ? "gold"
+      : cellData.isPeer
+      ? "lightblue"
+      : cellData.prefilled
+      ? "lightgray"
+      : "transparent"
+
   console.log("cell render")
 
   return (
@@ -71,17 +85,7 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
       alignItems="center"
       style={{
         cursor: "pointer",
-        backgroundColor: revealCell
-          ? "lightgreen"
-          : cellData.hasConflicts && showConflicts
-          ? "lightsalmon"
-          : cellData.isSelected
-          ? "gold"
-          : cellData.isPeer
-          ? "lightblue"
-          : cellData.prefilled
-          ? "lightgray"
-          : "transparent",
+        backgroundColor: backgroundColor,
       }}
     >
       {displayValue}

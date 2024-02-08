@@ -23,6 +23,7 @@ export async function fetchNewPuzzle(): Promise<NewPuzzleData> {
       isPeer: false,
       isSelected: false,
       hasConflicts: false,
+      isCorrect: null,
     }))
   )
 
@@ -46,6 +47,7 @@ export async function fetchNewPuzzle(): Promise<NewPuzzleData> {
             isPeer: false,
             isSelected: false,
             hasConflicts: false,
+            isCorrect: null,
           }
         }
       }
