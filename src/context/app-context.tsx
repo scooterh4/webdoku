@@ -16,7 +16,7 @@ export interface CellData {
   prefilled: boolean
   isPeer: boolean
   isSelected: boolean
-  hasConflicts: boolean
+  conflicts: CellLocation[]
   isCorrect: boolean | undefined
 }
 

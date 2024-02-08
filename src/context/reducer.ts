@@ -1,4 +1,4 @@
-import { CellData, CellLocation, State } from "./app-context"
+import { CellLocation, State } from "./app-context"
 import { NewPuzzleData } from "./fetch-new-puzzle"
 
 export type Actions =
@@ -65,82 +65,96 @@ export const reducer = (state: State, action: Actions): State => {
         loading: action.loading,
       }
 
-    // need to deal with keyboard button clicked resetting old conflicts
     case "keyboardButtonClicked": {
       const { selectedCell, puzzle, makeNotes } = state
-      if (!selectedCell || puzzle[selectedCell.row][selectedCell.col].prefilled)
-        return state // No cell selected, or its already a given cell, so nothing to update
+      if (
+        !selectedCell ||
+        puzzle[selectedCell.row][selectedCell.col].prefilled
+      ) {
+        return state // Early return if no cell is selected or if it's prefilled.
+      }
 
-      let selectedCellHasConflicts = false // use to update the selected cell after if it has conflicts
+      // Directly clone the puzzle to ensure top-level immutability
+      let updatedPuzzle = [...puzzle]
 
-      const updatedPuzzle: CellData[][] = puzzle.map((row, rowIndex) =>
-        row.map((cell, colIndex) => {
-          // Determine if the cell is a peer (same row, column, or 3x3 grid)
+      // Determine peers before updating any cell to minimize updates
+      const peersToUpdate: CellLocation[] = []
+      for (let rowIndex = 0; rowIndex < puzzle.length; rowIndex++) {
+        for (let colIndex = 0; colIndex < puzzle[rowIndex].length; colIndex++) {
           const isInSameRowOrCol =
             rowIndex === selectedCell.row || colIndex === selectedCell.col
           const isInSameGrid =
             Math.floor(rowIndex / 3) === Math.floor(selectedCell.row / 3) &&
             Math.floor(colIndex / 3) === Math.floor(selectedCell.col / 3)
-
           const isPeer = isInSameRowOrCol || isInSameGrid
 
-          // Update the selected cell
-          if (
-            rowIndex === selectedCell.row &&
-            colIndex === selectedCell.col &&
-            !cell.prefilled
-          ) {
-            if (makeNotes) {
-              let notes =
-                cell.value instanceof Set ? cell.value : new Set<number>()
-              notes.has(action.value)
-                ? notes.delete(action.value)
-                : notes.add(action.value)
-              return {
-                ...cell,
-                value: notes,
-                isPeer: false, // Reset peer and conflict flags if needed
-                hasConflicts: false,
-                isCorrect: undefined,
-              }
-            } else {
-              // Direct value input (not making notes)
-              return {
-                ...cell,
-                value: action.value,
-                isPeer: false,
-                hasConflicts: false, // Reset flags
-                isCorrect: undefined,
-              }
+          if (isPeer) {
+            // Check if the cell's conflict status will change based on the new value
+            const cell = puzzle[rowIndex][colIndex]
+            const hasConflict =
+              !makeNotes &&
+              typeof action.value === "number" &&
+              cell.value === action.value
+            const hadConflict = cell.conflicts.some(
+              (conflict) =>
+                conflict.row === selectedCell.row &&
+                conflict.col === selectedCell.col
+            )
+
+            if (hasConflict !== hadConflict) {
+              // If the conflict status changes
+              peersToUpdate.push({ row: rowIndex, col: colIndex })
             }
           }
+        }
+      }
 
-          // Flag conflicts only if not making notes and there's a definitive value input
-          if (isPeer && !makeNotes) {
-            let hasConflicts =
-              typeof cell.value === "number" && cell.value === action.value
+      let selectedCellNewConflicts: CellLocation[] = []
 
-            if (hasConflicts) {
-              selectedCellHasConflicts = true
-              return {
-                ...cell,
-                hasConflicts: hasConflicts,
-                isCorrect: undefined,
-              }
+      // Update the selected cell and any peers with changing conflict status
+      updatedPuzzle = updatedPuzzle.map((row, rowIndex) =>
+        row.map((cell, colIndex) => {
+          if (rowIndex === selectedCell.row && colIndex === selectedCell.col) {
+            // Handle the selected cell update
+            const newValue = makeNotes
+              ? (cell.value instanceof Set
+                  ? cell.value
+                  : new Set<number>()
+                ).add(action.value)
+              : action.value
+            return {
+              ...cell,
+              value: newValue,
+              isCorrect: undefined,
+            } // Reset conflicts if not making notes
+          } else if (
+            peersToUpdate.some(
+              (peer) => peer.row === rowIndex && peer.col === colIndex
+            )
+          ) {
+            // Handle peer updates for changing conflict status
+            const newConflicts = cell.conflicts.filter(
+              (conflict) =>
+                conflict.row !== selectedCell.row ||
+                conflict.col !== selectedCell.col
+            )
+            if (!makeNotes && cell.value === action.value) {
+              selectedCellNewConflicts.push(cell.location)
+              newConflicts.push(selectedCell) // Add selected cell to conflicts if it now conflicts
             }
+            return { ...cell, conflicts: newConflicts, isCorrect: undefined }
           }
 
           if (typeof cell.isCorrect === "boolean") {
             return { ...cell, isCorrect: undefined }
           }
 
-          return cell // Return other cells as-is
+          return cell // Return unchanged cells as-is to avoid unnecessary updates
         })
       )
 
-      if (selectedCellHasConflicts) {
-        updatedPuzzle[selectedCell.row][selectedCell.col].hasConflicts = true
-      }
+      updatedPuzzle[selectedCell.row][selectedCell.col].conflicts =
+        selectedCellNewConflicts
 
       return {
         ...state,
@@ -160,17 +174,15 @@ export const reducer = (state: State, action: Actions): State => {
         return state // Return the current state if there's no selected cell or it's prefilled
       }
 
-      const selectedCellData = puzzle[selectedCell.row][selectedCell.col]
-
-      // Create a new puzzle array with the selected cell's value set to 0 (or null, if you prefer to indicate an empty cell)
+      // Create a new puzzle array with the selected cell's value set to 0
       const newPuzz = puzzle.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           if (rowIndex === selectedCell.row && colIndex === selectedCell.col) {
             return {
               ...cell,
               value: 0,
-              hasConflicts: false,
               isCorrect: undefined,
+              conflicts: [], // cells with a value of zero do not have conflicts
             } // Reset cell properties as needed
           }
 
@@ -182,13 +194,15 @@ export const reducer = (state: State, action: Actions): State => {
             Math.floor(colIndex / 3) === Math.floor(selectedCell.col / 3)
           const isPeer = isInSameRowOrCol || isInSameGrid
 
-          // Check if the cell is a peer and had conflicts with the selected cell
-          if (
-            isPeer &&
-            cell.hasConflicts &&
-            cell.value === selectedCellData.value
-          ) {
-            return { ...cell, hasConflicts: false } // remove formerly conflicting cells
+          // Check if the cell is a peer and had conflicts
+          if (isPeer && cell.conflicts.length > 0) {
+            // update formerly conflicting cells
+            const newConflicts = cell.conflicts.filter(
+              (conflict) =>
+                conflict.row !== selectedCell.row ||
+                conflict.col !== selectedCell.col
+            )
+            return { ...cell, conflicts: newConflicts }
           }
 
           return cell
@@ -300,7 +314,7 @@ export const reducer = (state: State, action: Actions): State => {
             return {
               ...cell,
               value: 0,
-              hasConflicts: false,
+              conflicts: [],
               isPeer: false,
               isCorrect: undefined,
               isSelected: false,
@@ -308,7 +322,7 @@ export const reducer = (state: State, action: Actions): State => {
           }
           return {
             ...cell,
-            hasConflicts: false,
+            conflicts: [],
             isPeer: false,
             isCorrect: undefined,
             isSelected: false,
