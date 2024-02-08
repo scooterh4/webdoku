@@ -38,9 +38,10 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
   const displayValue = cellData ? (
     typeof cellData.value === "number" ? (
       <Typography
-        color={cellData.value === 0 ? "transparent" : "black"}
+        color={cellData.prefilled ? "black" : "darkmagenta"}
         visibility={cellData.value === 0 ? "hidden" : "visible"}
         fontSize={"24pt"}
+        fontWeight={cellData.prefilled ? "bold" : "normal"}
       >
         {cellData.value}
       </Typography>
