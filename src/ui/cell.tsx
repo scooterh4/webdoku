@@ -5,7 +5,7 @@ import {
   useShowConflictsContext,
   useSudokuAPI,
 } from "../context/app-context"
-import { Box, Typography } from "@mui/material"
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CellNotes from "./cell-notes"
 
 interface CellProps {
@@ -30,6 +30,8 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
   const { selectCell } = useSudokuAPI()
   const cellBorder = getCellBorder(cellData.location)
   const showConflicts = useShowConflictsContext()
+  const theme = useTheme()
+  const xsScreen = useMediaQuery(theme.breakpoints.only("xs"))
 
   const handleClick = () => {
     selectCell(cellData.location)
@@ -61,8 +63,8 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
       borderRight={cellBorder.right}
       borderTop={cellBorder.top}
       borderBottom={cellBorder.bottom}
-      width={40}
-      height={40}
+      width={xsScreen ? 30 : 45}
+      height={xsScreen ? 35 : 45}
       display="flex"
       justifyContent="center"
       alignItems="center"
