@@ -40,6 +40,7 @@ type API = {
   checkSelectedCell: () => void
   revealSelectedCell: () => void
   checkPuzzle: () => void
+  revealPuzzle: () => void
 }
 
 const PuzzleContext = createContext<State["puzzle"]>({} as State["puzzle"])
@@ -131,6 +132,10 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch({ type: "checkPuzzle" })
     }
 
+    const revealPuzzle = () => {
+      dispatch({ type: "revealPuzzle" })
+    }
+
     return {
       selectCell,
       getNewGame,
@@ -141,6 +146,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       checkSelectedCell,
       revealSelectedCell,
       checkPuzzle,
+      revealPuzzle,
     }
   }, [])
 

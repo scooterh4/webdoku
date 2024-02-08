@@ -12,6 +12,7 @@ export type Actions =
   | { type: "checkSelectedCell" }
   | { type: "revealSelectedCell" }
   | { type: "checkPuzzle" }
+  | { type: "revealPuzzle" }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -272,6 +273,23 @@ export const reducer = (state: State, action: Actions): State => {
       )
 
       return { ...state, puzzle: checkedPuzzle }
+
+    case "revealPuzzle":
+      const sol = state.solution
+
+      const revealedPuzzle = state.puzzle.map((row, rowIndex) =>
+        row.map((cell, colIndex) => {
+          const correctCellValue = cell.value === sol[rowIndex][colIndex]
+
+          if (cell.prefilled || correctCellValue) {
+            return { ...cell, isSelected: false, isPeer: false }
+          }
+
+          return { ...cell, value: sol[rowIndex][colIndex], isCorrect: true }
+        })
+      )
+
+      return { ...state, puzzle: revealedPuzzle }
 
     default:
       return state
