@@ -65,6 +65,8 @@ export const reducer = (state: State, action: Actions): State => {
       if (!selectedCell || puzzle[selectedCell.row][selectedCell.col].prefilled)
         return state // No cell selected, or its already a given cell, so nothing to update
 
+      let selectedCellHasConflicts = false // use to update the selected cell after if it has conflicts
+
       const updatedPuzzle: CellData[][] = puzzle.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           // Determine if the cell is a peer (same row, column, or 3x3 grid)
@@ -111,6 +113,7 @@ export const reducer = (state: State, action: Actions): State => {
               typeof cell.value === "number" && cell.value === action.value
 
             if (hasConflicts) {
+              selectedCellHasConflicts = true
               return { ...cell, hasConflicts: hasConflicts }
             }
           }
@@ -118,6 +121,10 @@ export const reducer = (state: State, action: Actions): State => {
           return cell // Return other cells as-is
         })
       )
+
+      if (selectedCellHasConflicts) {
+        updatedPuzzle[selectedCell.row][selectedCell.col].hasConflicts = true
+      }
 
       return {
         ...state,
