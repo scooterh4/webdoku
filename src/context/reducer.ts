@@ -8,6 +8,7 @@ export type Actions =
   | { type: "keyboardButtonClicked"; value: number }
   | { type: "eraseSelectedCell" }
   | { type: "setMakeNotes" }
+  | { type: "setShowConflicts"; value: boolean }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -105,7 +106,7 @@ export const reducer = (state: State, action: Actions): State => {
           }
 
           // Flag conflicts only if not making notes and there's a definitive value input
-          if (isPeer && !makeNotes && state.showConflicts) {
+          if (isPeer && !makeNotes) {
             let hasConflicts =
               typeof cell.value === "number" && cell.value === action.value
 
@@ -175,11 +176,13 @@ export const reducer = (state: State, action: Actions): State => {
 
     case "setMakeNotes":
       const notes = !state.makeNotes
-      console.log("switch makeNotes to ", notes)
       return {
         ...state,
         makeNotes: notes,
       }
+
+    case "setShowConflicts":
+      return { ...state, showConflicts: action.value }
 
     default:
       return state

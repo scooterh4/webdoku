@@ -1,5 +1,10 @@
 import React from "react"
-import { CellData, CellLocation, useSudokuAPI } from "../context/app-context"
+import {
+  CellData,
+  CellLocation,
+  useShowConflictsContext,
+  useSudokuAPI,
+} from "../context/app-context"
 import { Box, Typography } from "@mui/material"
 import CellNotes from "./cell-notes"
 
@@ -24,6 +29,7 @@ function getCellBorder(location: CellLocation) {
 const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
   const { selectCell } = useSudokuAPI()
   const cellBorder = getCellBorder(cellData.location)
+  const showConflicts = useShowConflictsContext()
 
   const handleClick = () => {
     selectCell(cellData.location)
@@ -45,6 +51,8 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
     <Typography visibility={"hidden"}>0</Typography>
   )
 
+  console.log("cell render")
+
   return (
     <Box
       onClick={handleClick}
@@ -59,15 +67,16 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
       alignItems="center"
       style={{
         cursor: "pointer",
-        backgroundColor: cellData.hasConflicts
-          ? "lightsalmon"
-          : cellData.isSelected
-          ? "gold"
-          : cellData.isPeer
-          ? "lightblue"
-          : cellData.prefilled
-          ? "lightgray"
-          : "transparent",
+        backgroundColor:
+          cellData.hasConflicts && showConflicts
+            ? "lightsalmon"
+            : cellData.isSelected
+            ? "gold"
+            : cellData.isPeer
+            ? "lightblue"
+            : cellData.prefilled
+            ? "lightgray"
+            : "transparent",
       }}
     >
       {displayValue}

@@ -4,6 +4,7 @@ import BackspaceIcon from "@mui/icons-material/Backspace"
 import EditIcon from "@mui/icons-material/Edit"
 import OptionsMenu from "./options-menu"
 import NewGameButton from "./new-game-button"
+import SettingsButton from "./settings-button"
 
 export default function Actions() {
   const { eraseSelectedCell, setMakeNotes } = useSudokuAPI()
@@ -33,6 +34,8 @@ export default function Actions() {
       </IconButton>
 
       <OptionsMenu />
+
+      <SettingsButton />
 
       <NewGameButton />
     </Box>
