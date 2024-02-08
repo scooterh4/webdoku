@@ -154,6 +154,7 @@ export const reducer = (state: State, action: Actions): State => {
             return {
               ...cell,
               value: 0,
+              hasConflicts: false,
             } // Reset cell properties as needed
           }
 
