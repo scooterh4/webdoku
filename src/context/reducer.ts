@@ -11,6 +11,7 @@ export type Actions =
   | { type: "setShowConflicts"; value: boolean }
   | { type: "checkSelectedCell" }
   | { type: "revealSelectedCell" }
+  | { type: "checkPuzzle" }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -241,6 +242,28 @@ export const reducer = (state: State, action: Actions): State => {
         puzzle: updatedPuzzle,
         revealCell: cellOfInterest,
       }
+
+    case "checkPuzzle":
+      const solution = state.solution
+
+      const checkedPuzzle = state.puzzle.map((row, rowIndex) =>
+        row.map((cell, colIndex) => {
+          const solutionValue = solution[rowIndex][colIndex]
+
+          if (
+            typeof cell.value === "number" &&
+            cell.value > 0 &&
+            !cell.prefilled &&
+            cell.value !== solutionValue
+          ) {
+            return { ...cell, isCorrect: false }
+          }
+
+          return cell // unfilled cells return as before
+        })
+      )
+
+      return { ...state, puzzle: checkedPuzzle }
 
     default:
       return state

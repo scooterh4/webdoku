@@ -4,7 +4,7 @@ import { IconButton, Menu, MenuItem } from "@mui/material"
 import { useSudokuAPI } from "../context/app-context"
 
 export default function OptionsMenu() {
-  const { checkSelectedCell, revealSelectedCell } = useSudokuAPI()
+  const { checkSelectedCell, revealSelectedCell, checkPuzzle } = useSudokuAPI()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -21,6 +21,11 @@ export default function OptionsMenu() {
 
   const onRevealCell = () => {
     revealSelectedCell()
+    setAnchorEl(null)
+  }
+
+  const onCheckPuzzle = () => {
+    checkPuzzle()
     setAnchorEl(null)
   }
 
@@ -46,7 +51,7 @@ export default function OptionsMenu() {
       >
         <MenuItem onClick={onCheckCell}>Check cell</MenuItem>
         <MenuItem onClick={onRevealCell}>Reveal cell</MenuItem>
-        <MenuItem onClick={handleClose}>Check puzzle</MenuItem>
+        <MenuItem onClick={onCheckPuzzle}>Check puzzle</MenuItem>
         <MenuItem onClick={handleClose}>Reveal puzzle</MenuItem>
         <MenuItem onClick={handleClose}>Reset puzzle</MenuItem>
       </Menu>
