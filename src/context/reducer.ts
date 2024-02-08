@@ -9,6 +9,7 @@ export type Actions =
   | { type: "eraseSelectedCell" }
   | { type: "setMakeNotes" }
   | { type: "setShowConflicts"; value: boolean }
+  | { type: "revealSelectedCell" }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -129,6 +130,7 @@ export const reducer = (state: State, action: Actions): State => {
       return {
         ...state,
         puzzle: updatedPuzzle,
+        revealCell: null,
       }
     }
 
@@ -190,6 +192,32 @@ export const reducer = (state: State, action: Actions): State => {
 
     case "setShowConflicts":
       return { ...state, showConflicts: action.value }
+
+    case "revealSelectedCell":
+      const cellOfInterest = state.selectedCell
+      if (!cellOfInterest) {
+        return state
+      }
+
+      const currPuzzle = state.puzzle
+      const revealCellValue =
+        state.solution[cellOfInterest.row][cellOfInterest.col]
+
+      const updatedPuzzle = currPuzzle.map((row) =>
+        row.map((cell) => {
+          if (cell.location === cellOfInterest) {
+            return { ...cell, value: revealCellValue }
+          }
+
+          return cell
+        })
+      )
+
+      return {
+        ...state,
+        puzzle: updatedPuzzle,
+        revealCell: cellOfInterest,
+      }
 
     default:
       return state

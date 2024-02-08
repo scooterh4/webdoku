@@ -10,6 +10,7 @@ import CellNotes from "./cell-notes"
 
 interface CellProps {
   cellData: CellData
+  revealCell: boolean
 }
 
 function getCellBorder(location: CellLocation) {
@@ -26,7 +27,7 @@ function getCellBorder(location: CellLocation) {
   return { left, right, top, bottom }
 }
 
-const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
+const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
   const { selectCell } = useSudokuAPI()
   const cellBorder = getCellBorder(cellData.location)
   const showConflicts = useShowConflictsContext()
@@ -70,16 +71,17 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData }) => {
       alignItems="center"
       style={{
         cursor: "pointer",
-        backgroundColor:
-          cellData.hasConflicts && showConflicts
-            ? "lightsalmon"
-            : cellData.isSelected
-            ? "gold"
-            : cellData.isPeer
-            ? "lightblue"
-            : cellData.prefilled
-            ? "lightgray"
-            : "transparent",
+        backgroundColor: revealCell
+          ? "lightgreen"
+          : cellData.hasConflicts && showConflicts
+          ? "lightsalmon"
+          : cellData.isSelected
+          ? "gold"
+          : cellData.isPeer
+          ? "lightblue"
+          : cellData.prefilled
+          ? "lightgray"
+          : "transparent",
       }}
     >
       {displayValue}

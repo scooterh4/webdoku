@@ -26,6 +26,7 @@ export type State = {
   loading: boolean
   makeNotes: boolean
   showConflicts: boolean
+  revealCell: CellLocation | null
 }
 
 type API = {
@@ -35,6 +36,7 @@ type API = {
   eraseSelectedCell: () => void
   setMakeNotes: () => void
   setShowConflicts: (value: boolean) => void
+  revealSelectedCell: () => void
 }
 
 const PuzzleContext = createContext<State["puzzle"]>({} as State["puzzle"])
@@ -45,6 +47,7 @@ const SelectedCellContext = createContext<State["selectedCell"]>(null)
 const LoadingContext = createContext<State["loading"]>(false)
 const MakeNotesContext = createContext<State["makeNotes"]>(false)
 const ShowConflictsContext = createContext<State["showConflicts"]>(true)
+const RevealCellContext = createContext<State["revealCell"]>(null)
 const APIContext = createContext<API>({} as API)
 
 export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
@@ -55,6 +58,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
     loading: true,
     makeNotes: false,
     showConflicts: true,
+    revealCell: null,
   })
 
   useEffect(() => {
@@ -112,6 +116,10 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch({ type: "setShowConflicts", value })
     }
 
+    const revealSelectedCell = () => {
+      dispatch({ type: "revealSelectedCell" })
+    }
+
     return {
       selectCell,
       getNewGame,
@@ -119,6 +127,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       eraseSelectedCell,
       setMakeNotes,
       setShowConflicts,
+      revealSelectedCell,
     }
   }, [])
 
@@ -129,7 +138,9 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
           <SelectedCellContext.Provider value={state.selectedCell}>
             <MakeNotesContext.Provider value={state.makeNotes}>
               <ShowConflictsContext.Provider value={state.showConflicts}>
-                {children}
+                <RevealCellContext.Provider value={state.revealCell}>
+                  {children}
+                </RevealCellContext.Provider>
               </ShowConflictsContext.Provider>
             </MakeNotesContext.Provider>
           </SelectedCellContext.Provider>
@@ -146,3 +157,4 @@ export const useSelectedCellContext = () => useContext(SelectedCellContext)
 export const useLoadingContext = () => useContext(LoadingContext)
 export const useMakeNotesContext = () => useContext(MakeNotesContext)
 export const useShowConflictsContext = () => useContext(ShowConflictsContext)
+export const useRevealCellContext = () => useContext(RevealCellContext)
