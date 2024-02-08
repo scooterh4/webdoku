@@ -13,6 +13,7 @@ export type Actions =
   | { type: "revealSelectedCell" }
   | { type: "checkPuzzle" }
   | { type: "revealPuzzle" }
+  | { type: "resetPuzzle" }
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -64,6 +65,7 @@ export const reducer = (state: State, action: Actions): State => {
         loading: action.loading,
       }
 
+    // need to deal with keyboard button clicked resetting old conflicts
     case "keyboardButtonClicked": {
       const { selectedCell, puzzle, makeNotes } = state
       if (!selectedCell || puzzle[selectedCell.row][selectedCell.col].prefilled)
@@ -290,6 +292,31 @@ export const reducer = (state: State, action: Actions): State => {
       )
 
       return { ...state, puzzle: revealedPuzzle }
+
+    case "resetPuzzle":
+      const resetPuzzle = state.puzzle.map((row) =>
+        row.map((cell) => {
+          if (!cell.prefilled) {
+            return {
+              ...cell,
+              value: 0,
+              hasConflicts: false,
+              isPeer: false,
+              isCorrect: undefined,
+              isSelected: false,
+            }
+          }
+          return {
+            ...cell,
+            hasConflicts: false,
+            isPeer: false,
+            isCorrect: undefined,
+            isSelected: false,
+          }
+        })
+      )
+
+      return { ...state, puzzle: resetPuzzle, selectedCell: null }
 
     default:
       return state
