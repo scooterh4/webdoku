@@ -98,7 +98,7 @@ export const reducer = (state: State, action: Actions): State => {
                 value: notes,
                 isPeer: false, // Reset peer and conflict flags if needed
                 hasConflicts: false,
-                isCorrect: null,
+                isCorrect: undefined,
               }
             } else {
               // Direct value input (not making notes)
@@ -107,7 +107,7 @@ export const reducer = (state: State, action: Actions): State => {
                 value: action.value,
                 isPeer: false,
                 hasConflicts: false, // Reset flags
-                isCorrect: null,
+                isCorrect: undefined,
               }
             }
           }
@@ -119,11 +119,19 @@ export const reducer = (state: State, action: Actions): State => {
 
             if (hasConflicts) {
               selectedCellHasConflicts = true
-              return { ...cell, hasConflicts: hasConflicts, isCorrect: null }
+              return {
+                ...cell,
+                hasConflicts: hasConflicts,
+                isCorrect: undefined,
+              }
             }
           }
 
-          return { ...cell, isCorrect: null } // Return other cells as-is
+          if (typeof cell.isCorrect === "boolean") {
+            return { ...cell, isCorrect: undefined }
+          }
+
+          return cell // Return other cells as-is
         })
       )
 
@@ -159,7 +167,7 @@ export const reducer = (state: State, action: Actions): State => {
               ...cell,
               value: 0,
               hasConflicts: false,
-              isCorrect: null,
+              isCorrect: undefined,
             } // Reset cell properties as needed
           }
 

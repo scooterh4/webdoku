@@ -17,7 +17,7 @@ export interface CellData {
   isPeer: boolean
   isSelected: boolean
   hasConflicts: boolean
-  isCorrect: boolean | null
+  isCorrect: boolean | undefined
 }
 
 export type State = {
