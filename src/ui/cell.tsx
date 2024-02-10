@@ -41,7 +41,7 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
   const displayValue = cellData ? (
     typeof cellData.value === "number" ? (
       <Typography
-        color={cellData.prefilled ? "black" : "darkmagenta"}
+        // color={cellData.prefilled ? "black" : "darkmagenta"}
         visibility={cellData.value === 0 ? "hidden" : "visible"}
         fontSize={"24pt"}
         fontWeight={cellData.prefilled ? "bold" : "normal"}
@@ -65,8 +65,10 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
       ? "lightsalmon"
       : cellData.isSelected
       ? "gold"
+      : cellData.isSameValueAsSelect
+      ? "#7ACBE7"
       : cellData.isPeer
-      ? "lightblue"
+      ? "#CDEBF6"
       : cellData.prefilled
       ? "lightgray"
       : "transparent"

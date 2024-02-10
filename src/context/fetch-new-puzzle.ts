@@ -21,6 +21,7 @@ export async function fetchNewPuzzle(): Promise<NewPuzzleData> {
       value: 0, // This will be overwritten
       prefilled: false,
       isPeer: false,
+      isSameValueAsSelect: false,
       isSelected: false,
       conflicts: [],
       isCorrect: undefined,
@@ -45,6 +46,7 @@ export async function fetchNewPuzzle(): Promise<NewPuzzleData> {
             value: resPuzzle[i][j],
             prefilled: resPuzzle[i][j] !== 0,
             isPeer: false,
+            isSameValueAsSelect: false,
             isSelected: false,
             conflicts: [],
             isCorrect: undefined,

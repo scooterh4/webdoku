@@ -15,6 +15,7 @@ export interface CellData {
   value: number | Set<number> // Number or notes
   prefilled: boolean
   isPeer: boolean
+  isSameValueAsSelect: boolean
   isSelected: boolean
   conflicts: CellLocation[]
   isCorrect: boolean | undefined

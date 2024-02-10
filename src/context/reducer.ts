@@ -28,17 +28,33 @@ export const reducer = (state: State, action: Actions): State => {
             colIndex === action.location.col ||
             (Math.floor(rowIndex / 3) === Math.floor(action.location.row / 3) &&
               Math.floor(colIndex / 3) === Math.floor(action.location.col / 3))
-          const isPrev = cell.isPeer || cell.isSelected
+          const isSameValueAsSelect =
+            typeof cell.value === "number" &&
+            cell.value > 0 &&
+            cell.value ===
+              state.puzzle[action.location.row][action.location.col].value
+          const isPrev =
+            cell.isPeer || cell.isSelected || cell.isSameValueAsSelect
 
           if (isSelectedCell) {
             // Update isSelected for the selected cell
             return { ...cell, isSelected: true } // Toggle or set true as needed
           }
-          if (isPeer) {
-            return { ...cell, isSelected: false, isPeer: true }
+          if (isPeer || isSameValueAsSelect) {
+            return {
+              ...cell,
+              isSelected: false,
+              isPeer: isPeer,
+              isSameValueAsSelect: isSameValueAsSelect,
+            }
           }
           if (isPrev) {
-            return { ...cell, isSelected: false, isPeer: false }
+            return {
+              ...cell,
+              isSelected: false,
+              isPeer: false,
+              isSameValueAsSelect: false,
+            }
           }
 
           return cell // Return other cells as-is
@@ -114,8 +130,8 @@ export const reducer = (state: State, action: Actions): State => {
       // Update the selected cell and any peers with changing conflict status
       updatedPuzzle = updatedPuzzle.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
+          // Handle the selected cell update
           if (rowIndex === selectedCell.row && colIndex === selectedCell.col) {
-            // Handle the selected cell update
             const newValue = makeNotes
               ? (cell.value instanceof Set
                   ? cell.value
@@ -145,8 +161,12 @@ export const reducer = (state: State, action: Actions): State => {
             return { ...cell, conflicts: newConflicts, isCorrect: undefined }
           }
 
-          if (typeof cell.isCorrect === "boolean") {
-            return { ...cell, isCorrect: undefined }
+          if (cell.value === action.value && !makeNotes) {
+            return { ...cell, isCorrect: undefined, isSameValueAsSelect: true }
+          }
+
+          if (typeof cell.isCorrect === "boolean" || cell.isSameValueAsSelect) {
+            return { ...cell, isCorrect: undefined, isSameValueAsSelect: false }
           }
 
           return cell // Return unchanged cells as-is to avoid unnecessary updates
@@ -169,10 +189,14 @@ export const reducer = (state: State, action: Actions): State => {
       // Ensure we have a selected cell and it's not prefilled
       if (
         !selectedCell ||
-        puzzle[selectedCell.row][selectedCell.col].prefilled
+        puzzle[selectedCell.row][selectedCell.col].prefilled ||
+        puzzle[selectedCell.row][selectedCell.col].value === 0
       ) {
         return state // Return the current state if there's no selected cell or it's prefilled
       }
+
+      const erasedCellOldValue =
+        puzzle[selectedCell.row][selectedCell.col].value
 
       // Create a new puzzle array with the selected cell's value set to 0
       const newPuzz = puzzle.map((row, rowIndex) =>
@@ -203,6 +227,13 @@ export const reducer = (state: State, action: Actions): State => {
                 conflict.col !== selectedCell.col
             )
             return { ...cell, conflicts: newConflicts }
+          }
+
+          if (
+            typeof erasedCellOldValue === "number" &&
+            cell.value === erasedCellOldValue
+          ) {
+            return { ...cell, isPeer: false, isSameValueAsSelect: false }
           }
 
           return cell
