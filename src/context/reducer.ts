@@ -19,6 +19,8 @@ export type Actions =
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
     case "selectCell":
+      if (state.isPuzzleFinished) return state
+
       // Create a deep copy of the puzzle to ensure changes create a new reference
       const newPuzzle = state.puzzle.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
@@ -84,8 +86,9 @@ export const reducer = (state: State, action: Actions): State => {
       }
 
     case "keyboardButtonClicked": {
-      const { selectedCell, puzzle, makeNotes } = state
+      const { selectedCell, puzzle, makeNotes, isPuzzleFinished } = state
       if (
+        isPuzzleFinished ||
         !selectedCell ||
         puzzle[selectedCell.row][selectedCell.col].prefilled
       ) {
