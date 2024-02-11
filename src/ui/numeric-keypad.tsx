@@ -1,9 +1,12 @@
-import React from "react"
 import Grid from "@mui/material/Grid"
 import Button from "@mui/material/Button"
-import { useSudokuAPI } from "../context/app-context"
+import {
+  useIsPuzzleFinishedContext,
+  useSudokuAPI,
+} from "../context/app-context"
 
 export default function NumericKeypad() {
+  const isPuzzleFinished = useIsPuzzleFinishedContext()
   const { keyboardButtonClicked } = useSudokuAPI()
 
   // Function to handle button click, passing the number back
@@ -19,6 +22,7 @@ export default function NumericKeypad() {
             variant="outlined"
             fullWidth
             onClick={() => handleButtonClick(number)}
+            disabled={isPuzzleFinished}
           >
             {number}
           </Button>

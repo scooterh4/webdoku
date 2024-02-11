@@ -1,4 +1,8 @@
-import { useMakeNotesContext, useSudokuAPI } from "../context/app-context"
+import {
+  useIsPuzzleFinishedContext,
+  useMakeNotesContext,
+  useSudokuAPI,
+} from "../context/app-context"
 import { Badge, Box, IconButton } from "@mui/material"
 import BackspaceIcon from "@mui/icons-material/Backspace"
 import EditIcon from "@mui/icons-material/Edit"
@@ -9,6 +13,7 @@ import NewGameButton from "./new-game-button"
 export default function Actions() {
   const { eraseSelectedCell, setMakeNotes } = useSudokuAPI()
   const notesStatus = useMakeNotesContext()
+  const isPuzzleFinished = useIsPuzzleFinishedContext()
 
   function callEraseCell() {
     eraseSelectedCell()
@@ -20,11 +25,11 @@ export default function Actions() {
 
   return (
     <Box>
-      <IconButton onClick={() => callEraseCell()}>
+      <IconButton onClick={() => callEraseCell()} disabled={isPuzzleFinished}>
         <BackspaceIcon />
       </IconButton>
 
-      <IconButton onClick={() => callMakeNotes()}>
+      <IconButton onClick={() => callMakeNotes()} disabled={isPuzzleFinished}>
         <Badge
           badgeContent={notesStatus ? "On" : "Off"}
           color={notesStatus ? "success" : "secondary"}
@@ -33,7 +38,7 @@ export default function Actions() {
         </Badge>
       </IconButton>
 
-      <OptionsMenu />
+      <OptionsMenu disabled={isPuzzleFinished} />
 
       {/* <SettingsButton /> */}
 

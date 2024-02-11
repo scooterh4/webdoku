@@ -1,10 +1,14 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material"
 import { useState } from "react"
-import { useSudokuAPI } from "../context/app-context"
+import {
+  useIsPuzzleFinishedContext,
+  useSudokuAPI,
+} from "../context/app-context"
 
 export default function NewGameButton() {
   const [showDialog, setShowDialog] = useState<boolean>(false)
   const { getNewGame } = useSudokuAPI()
+  const isPuzzleFinished = useIsPuzzleFinishedContext()
 
   function startNewGame() {
     getNewGame()
@@ -16,6 +20,7 @@ export default function NewGameButton() {
       <Button
         onClick={() => setShowDialog(true)}
         sx={{ textTransform: "none" }}
+        variant={isPuzzleFinished ? "contained" : "text"}
       >
         New game
       </Button>

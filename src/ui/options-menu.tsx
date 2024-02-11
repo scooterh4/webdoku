@@ -3,7 +3,11 @@ import LinearScaleIcon from "@mui/icons-material/LinearScale"
 import { IconButton, Menu, MenuItem } from "@mui/material"
 import { useSudokuAPI } from "../context/app-context"
 
-export default function OptionsMenu() {
+interface props {
+  disabled: boolean
+}
+
+export default function OptionsMenu({ disabled }: props) {
   const {
     checkSelectedCell,
     revealSelectedCell,
@@ -55,6 +59,7 @@ export default function OptionsMenu() {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        disabled={disabled}
       >
         <LinearScaleIcon />
       </IconButton>

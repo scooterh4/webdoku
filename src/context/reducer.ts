@@ -74,6 +74,7 @@ export const reducer = (state: State, action: Actions): State => {
         puzzle: action.data.puzzle,
         solution: action.data.solution,
         selectedCell: null, // Reset selection with new game
+        isPuzzleFinished: false,
       }
 
     case "setLoading":
@@ -232,6 +233,7 @@ export const reducer = (state: State, action: Actions): State => {
             ...state,
             puzzle: successPuzzle,
             revealCell: null,
+            isPuzzleFinished: true,
           }
         }
         toast.error("Uh oh!", { toastId: "puzzleErrors" })
@@ -425,7 +427,7 @@ export const reducer = (state: State, action: Actions): State => {
       )
 
       toast.info("Better luck next time", { toastId: "revealPuzzle" })
-      return { ...state, puzzle: revealedPuzzle }
+      return { ...state, puzzle: revealedPuzzle, isPuzzleFinished: true }
 
     case "resetPuzzle":
       const resetPuzzle = state.puzzle.map((row) =>

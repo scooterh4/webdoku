@@ -29,6 +29,7 @@ export type State = {
   makeNotes: boolean
   // showConflicts: boolean
   revealCell: CellLocation | null
+  isPuzzleFinished: boolean
 }
 
 type API = {
@@ -54,6 +55,7 @@ const LoadingContext = createContext<State["loading"]>(false)
 const MakeNotesContext = createContext<State["makeNotes"]>(false)
 // const ShowConflictsContext = createContext<State["showConflicts"]>(true)
 const RevealCellContext = createContext<State["revealCell"]>(null)
+const IsPuzzleFinishedContext = createContext<State["isPuzzleFinished"]>(false)
 const APIContext = createContext<API>({} as API)
 
 export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
@@ -65,6 +67,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
     makeNotes: false,
     // showConflicts: true,
     revealCell: null,
+    isPuzzleFinished: false,
   })
 
   useEffect(() => {
@@ -165,7 +168,11 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
             <MakeNotesContext.Provider value={state.makeNotes}>
               {/* <ShowConflictsContext.Provider value={state.showConflicts}> */}
               <RevealCellContext.Provider value={state.revealCell}>
-                {children}
+                <IsPuzzleFinishedContext.Provider
+                  value={state.isPuzzleFinished}
+                >
+                  {children}
+                </IsPuzzleFinishedContext.Provider>
               </RevealCellContext.Provider>
               {/* </ShowConflictsContext.Provider> */}
             </MakeNotesContext.Provider>
@@ -184,3 +191,5 @@ export const useLoadingContext = () => useContext(LoadingContext)
 export const useMakeNotesContext = () => useContext(MakeNotesContext)
 // export const useShowConflictsContext = () => useContext(ShowConflictsContext)
 export const useRevealCellContext = () => useContext(RevealCellContext)
+export const useIsPuzzleFinishedContext = () =>
+  useContext(IsPuzzleFinishedContext)
