@@ -1,3 +1,4 @@
+import { toast } from "react-toastify"
 import { CellLocation, State } from "./app-context"
 import { NewPuzzleData } from "./fetch-new-puzzle"
 
@@ -126,6 +127,7 @@ export const reducer = (state: State, action: Actions): State => {
       }
 
       let selectedCellNewConflicts: CellLocation[] = []
+      let isPuzzleFilledIn = true // asume the puzzle is completely filled in, and set it to false if otherwise
 
       // Update the selected cell and any peers with changing conflict status
       updatedPuzzle = updatedPuzzle.map((row, rowIndex) =>
@@ -143,7 +145,13 @@ export const reducer = (state: State, action: Actions): State => {
               value: newValue,
               isCorrect: undefined,
             } // Reset conflicts if not making notes
-          } else if (
+          }
+
+          isPuzzleFilledIn = isPuzzleFilledIn
+            ? typeof cell.value === "number" && cell.value > 0
+            : false
+
+          if (
             peersToUpdate.some(
               (peer) => peer.row === rowIndex && peer.col === colIndex
             )
@@ -175,6 +183,56 @@ export const reducer = (state: State, action: Actions): State => {
 
       updatedPuzzle[selectedCell.row][selectedCell.col].conflicts =
         selectedCellNewConflicts
+
+      // when the user fills the puzzle
+      if (isPuzzleFilledIn) {
+        console.log("puzzle is filled")
+
+        // need to check if there are no conflicts
+        let isCorrect = false
+        for (let row = 0; row < updatedPuzzle.length; row++) {
+          for (let col = 0; col < updatedPuzzle[0].length; col++) {
+            console.log("check cell for finished puzzle")
+            if (updatedPuzzle[row][col].value !== state.solution[row][col]) {
+              break
+            } else if (
+              row === 8 &&
+              col === 8 &&
+              updatedPuzzle[row][col].value === state.solution[row][col]
+            ) {
+              isCorrect = true
+            }
+          }
+        }
+
+        console.log("isCorrect value", isCorrect)
+        // the puzzle is finished and correct
+        if (isCorrect) {
+          const successPuzzle = updatedPuzzle.map((row) =>
+            row.map((cell) => {
+              if (cell.isPeer || cell.isSameValueAsSelect || cell.isSelected) {
+                return {
+                  ...cell,
+                  isPeer: false,
+                  isSameValueAsSelect: false,
+                  isSelected: false,
+                }
+              }
+              return cell
+            })
+          )
+
+          toast.success(`You did it!!! Congrats`, {
+            toastId: "finishedPuzzle",
+          })
+
+          return {
+            ...state,
+            puzzle: successPuzzle,
+            revealCell: null,
+          }
+        }
+      }
 
       return {
         ...state,

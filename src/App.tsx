@@ -6,7 +6,7 @@ import { Container } from "@mui/material"
 function App() {
   return (
     <Container maxWidth={"md"}>
-      <ToastContainer position="top-center" />
+      <ToastContainer position="top-center" theme="colored" />
       <AppLayout />
     </Container>
   )
