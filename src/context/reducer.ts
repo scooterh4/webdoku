@@ -315,6 +315,22 @@ export const reducer = (state: State, action: Actions): State => {
 
     case "checkSelectedCell":
       if (!state.selectedCell) return state
+      if (
+        typeof state.puzzle[state.selectedCell.row][state.selectedCell.col]
+          .value !== "number"
+      ) {
+        toast.warning("Cannot check notes", { toastId: "checkNotesError" })
+        return state
+      }
+      if (
+        state.puzzle[state.selectedCell.row][state.selectedCell.col].value ===
+          0 ||
+        typeof state.puzzle[state.selectedCell.row][state.selectedCell.col]
+          .value !== "number"
+      ) {
+        toast.warning("No value to check", { toastId: "noValue" })
+        return state
+      }
 
       const cellAnswer =
         state.solution[state.selectedCell.row][state.selectedCell.col]
@@ -322,6 +338,9 @@ export const reducer = (state: State, action: Actions): State => {
       const anotherPuzzle = state.puzzle.map((row) =>
         row.map((cell) => {
           if (cell.location === state.selectedCell) {
+            cell.value === cellAnswer
+              ? toast.success("Lookin good", { toastId: "goodCell" })
+              : toast.error("Uh oh", { toastId: "badCell" })
             return { ...cell, isCorrect: cell.value === cellAnswer }
           }
 
@@ -351,6 +370,8 @@ export const reducer = (state: State, action: Actions): State => {
         })
       )
 
+      toast.success("There ya go", { toastId: "revealCell" })
+
       return {
         ...state,
         puzzle: updatedPuzzle,
@@ -359,6 +380,7 @@ export const reducer = (state: State, action: Actions): State => {
 
     case "checkPuzzle":
       const solution = state.solution
+      let cellErrors = false
 
       const checkedPuzzle = state.puzzle.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
@@ -370,12 +392,17 @@ export const reducer = (state: State, action: Actions): State => {
             !cell.prefilled &&
             cell.value !== solutionValue
           ) {
+            cellErrors = true
             return { ...cell, isCorrect: false }
           }
 
           return cell // unfilled cells return as before
         })
       )
+
+      cellErrors
+        ? toast.error("Oopsies!", { toastId: "puzzleCheckError" })
+        : toast.success("So far so good", { toastId: "puzzleCheckGood" })
 
       return { ...state, puzzle: checkedPuzzle }
 
@@ -394,6 +421,7 @@ export const reducer = (state: State, action: Actions): State => {
         })
       )
 
+      toast.info("Better luck next time", { toastId: "revealPuzzle" })
       return { ...state, puzzle: revealedPuzzle }
 
     case "resetPuzzle":
@@ -419,6 +447,7 @@ export const reducer = (state: State, action: Actions): State => {
         })
       )
 
+      toast.info("A fresh start", { toastId: "resetPuzzle" })
       return { ...state, puzzle: resetPuzzle, selectedCell: null }
 
     default:
