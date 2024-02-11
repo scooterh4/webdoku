@@ -42,7 +42,7 @@ export default function Actions() {
 
       {/* <SettingsButton /> */}
 
-      <NewGameButton />
+      {!isPuzzleFinished && <NewGameButton />}
     </Box>
   )
 }

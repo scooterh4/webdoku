@@ -9,6 +9,7 @@ export default function NewGameButton() {
   const [showDialog, setShowDialog] = useState<boolean>(false)
   const { getNewGame } = useSudokuAPI()
   const isPuzzleFinished = useIsPuzzleFinishedContext()
+  const buttonText = isPuzzleFinished ? "Start a new game" : "New game"
 
   function startNewGame() {
     getNewGame()
@@ -21,8 +22,9 @@ export default function NewGameButton() {
         onClick={() => setShowDialog(true)}
         sx={{ textTransform: "none" }}
         variant={isPuzzleFinished ? "contained" : "text"}
+        size={isPuzzleFinished ? "large" : "small"}
       >
-        New game
+        {buttonText}
       </Button>
       <Dialog open={showDialog}>
         <DialogTitle>Are you sure you want to start a new game?</DialogTitle>
