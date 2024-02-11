@@ -1,40 +1,40 @@
-import SettingsIcon from "@mui/icons-material/Settings"
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControlLabel,
-  IconButton,
-  Switch,
-} from "@mui/material"
-import { useState } from "react"
-import { useShowConflictsContext, useSudokuAPI } from "../context/app-context"
+// import SettingsIcon from "@mui/icons-material/Settings"
+// import {
+//   Button,
+//   Dialog,
+//   DialogActions,
+//   DialogContent,
+//   DialogTitle,
+//   FormControlLabel,
+//   IconButton,
+//   Switch,
+// } from "@mui/material"
+// import { useState } from "react"
+// import { useShowConflictsContext, useSudokuAPI } from "../context/app-context"
 
 export default function SettingsButton() {
-  const showConflicts = useShowConflictsContext()
-  const { setShowConflicts } = useSudokuAPI()
+  // const showConflicts = useShowConflictsContext()
+  // const { setShowConflicts } = useSudokuAPI()
 
-  const [openSettings, setOpenSettings] = useState<boolean>(false)
-  const [conflictsSwitch, setConflictsSwitch] = useState<boolean>(showConflicts)
+  // const [openSettings, setOpenSettings] = useState<boolean>(false)
+  // const [conflictsSwitch, setConflictsSwitch] = useState<boolean>(showConflicts)
 
-  function showSettings() {
-    setOpenSettings(true)
-  }
+  // function showSettings() {
+  //   setOpenSettings(true)
+  // }
 
-  function handleConflictsSwitchChange() {
-    setConflictsSwitch(!conflictsSwitch)
-  }
+  // function handleConflictsSwitchChange() {
+  //   setConflictsSwitch(!conflictsSwitch)
+  // }
 
-  function closeSettings() {
-    setOpenSettings(false)
-    setShowConflicts(conflictsSwitch)
-  }
+  // function closeSettings() {
+  //   setOpenSettings(false)
+  //   setShowConflicts(conflictsSwitch)
+  // }
 
   return (
     <>
-      <IconButton onClick={showSettings}>
+      {/* <IconButton onClick={showSettings}>
         <SettingsIcon />
       </IconButton>
 
@@ -55,7 +55,7 @@ export default function SettingsButton() {
         <DialogActions>
           <Button onClick={closeSettings}>Ok</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   )
 }

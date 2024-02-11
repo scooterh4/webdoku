@@ -9,7 +9,7 @@ export type Actions =
   | { type: "keyboardButtonClicked"; value: number }
   | { type: "eraseSelectedCell" }
   | { type: "setMakeNotes" }
-  | { type: "setShowConflicts"; value: boolean }
+  // | { type: "setShowConflicts"; value: boolean }
   | { type: "checkSelectedCell" }
   | { type: "revealSelectedCell" }
   | { type: "checkPuzzle" }
@@ -310,8 +310,8 @@ export const reducer = (state: State, action: Actions): State => {
         makeNotes: notes,
       }
 
-    case "setShowConflicts":
-      return { ...state, showConflicts: action.value }
+    // case "setShowConflicts":
+    //   return { ...state, showConflicts: action.value }
 
     case "checkSelectedCell":
       if (!state.selectedCell) return state

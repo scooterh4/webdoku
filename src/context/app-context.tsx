@@ -27,7 +27,7 @@ export type State = {
   selectedCell: CellLocation | null
   loading: boolean
   makeNotes: boolean
-  showConflicts: boolean
+  // showConflicts: boolean
   revealCell: CellLocation | null
 }
 
@@ -37,7 +37,7 @@ type API = {
   keyboardButtonClicked: (number: number) => void
   eraseSelectedCell: () => void
   setMakeNotes: () => void
-  setShowConflicts: (value: boolean) => void
+  // setShowConflicts: (value: boolean) => void
   checkSelectedCell: () => void
   revealSelectedCell: () => void
   checkPuzzle: () => void
@@ -52,7 +52,7 @@ const SolutionContext = createContext<State["solution"]>(
 const SelectedCellContext = createContext<State["selectedCell"]>(null)
 const LoadingContext = createContext<State["loading"]>(false)
 const MakeNotesContext = createContext<State["makeNotes"]>(false)
-const ShowConflictsContext = createContext<State["showConflicts"]>(true)
+// const ShowConflictsContext = createContext<State["showConflicts"]>(true)
 const RevealCellContext = createContext<State["revealCell"]>(null)
 const APIContext = createContext<API>({} as API)
 
@@ -63,7 +63,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
     selectedCell: null,
     loading: true,
     makeNotes: false,
-    showConflicts: true,
+    // showConflicts: true,
     revealCell: null,
   })
 
@@ -118,9 +118,9 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch({ type: "setMakeNotes" })
     }
 
-    const setShowConflicts = (value: boolean) => {
-      dispatch({ type: "setShowConflicts", value })
-    }
+    // const setShowConflicts = (value: boolean) => {
+    //   dispatch({ type: "setShowConflicts", value })
+    // }
 
     const checkSelectedCell = () => {
       dispatch({ type: "checkSelectedCell" })
@@ -148,7 +148,7 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
       keyboardButtonClicked,
       eraseSelectedCell,
       setMakeNotes,
-      setShowConflicts,
+      // setShowConflicts,
       checkSelectedCell,
       revealSelectedCell,
       checkPuzzle,
@@ -163,11 +163,11 @@ export const SudokuProvider = ({ children }: { children: React.ReactNode }) => {
         <PuzzleContext.Provider value={state.puzzle}>
           <SelectedCellContext.Provider value={state.selectedCell}>
             <MakeNotesContext.Provider value={state.makeNotes}>
-              <ShowConflictsContext.Provider value={state.showConflicts}>
-                <RevealCellContext.Provider value={state.revealCell}>
-                  {children}
-                </RevealCellContext.Provider>
-              </ShowConflictsContext.Provider>
+              {/* <ShowConflictsContext.Provider value={state.showConflicts}> */}
+              <RevealCellContext.Provider value={state.revealCell}>
+                {children}
+              </RevealCellContext.Provider>
+              {/* </ShowConflictsContext.Provider> */}
             </MakeNotesContext.Provider>
           </SelectedCellContext.Provider>
         </PuzzleContext.Provider>
@@ -182,5 +182,5 @@ export const useSolutionContext = () => useContext(SolutionContext)
 export const useSelectedCellContext = () => useContext(SelectedCellContext)
 export const useLoadingContext = () => useContext(LoadingContext)
 export const useMakeNotesContext = () => useContext(MakeNotesContext)
-export const useShowConflictsContext = () => useContext(ShowConflictsContext)
+// export const useShowConflictsContext = () => useContext(ShowConflictsContext)
 export const useRevealCellContext = () => useContext(RevealCellContext)

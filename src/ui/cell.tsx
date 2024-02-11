@@ -2,7 +2,7 @@ import React from "react"
 import {
   CellData,
   CellLocation,
-  useShowConflictsContext,
+  // useShowConflictsContext,
   useSudokuAPI,
 } from "../context/app-context"
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material"
@@ -29,7 +29,7 @@ function getCellBorder(location: CellLocation) {
 
 const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
   const { selectCell } = useSudokuAPI()
-  const showConflicts = useShowConflictsContext()
+  // const showConflicts = useShowConflictsContext()
   const cellBorder = getCellBorder(cellData.location)
   const theme = useTheme()
   const xsScreen = useMediaQuery(theme.breakpoints.only("xs"))
@@ -55,7 +55,8 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
     <Typography visibility={"hidden"}>0</Typography>
   )
 
-  const isConflict = cellData.conflicts.length > 0 && showConflicts
+  const isConflict = cellData.conflicts.length > 0
+  //&& showConflicts
 
   const backgroundColor =
     revealCell || cellData.isCorrect
