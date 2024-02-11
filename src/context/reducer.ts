@@ -189,11 +189,13 @@ export const reducer = (state: State, action: Actions): State => {
         console.log("puzzle is filled")
 
         // need to check if there are no conflicts
-        let isCorrect = false
+        let isCorrect
         for (let row = 0; row < updatedPuzzle.length; row++) {
+          if (typeof isCorrect === "boolean" && !isCorrect) break
           for (let col = 0; col < updatedPuzzle[0].length; col++) {
             console.log("check cell for finished puzzle")
             if (updatedPuzzle[row][col].value !== state.solution[row][col]) {
+              isCorrect = false
               break
             } else if (
               row === 8 &&
@@ -232,6 +234,7 @@ export const reducer = (state: State, action: Actions): State => {
             revealCell: null,
           }
         }
+        toast.error("Uh oh!", { toastId: "puzzleErrors" })
       }
 
       return {
