@@ -18,7 +18,7 @@ export default function AppLayout() {
       rowSpacing={2}
     >
       <Grid item xs={12}>
-        <Typography variant="h2" textAlign={"center"}>
+        <Typography variant="h1" textAlign={"center"}>
           Webdoku
         </Typography>
       </Grid>

@@ -20,7 +20,6 @@ export default function NewGameButton() {
     <>
       <Button
         onClick={() => setShowDialog(true)}
-        sx={{ textTransform: "none" }}
         variant={isPuzzleFinished ? "contained" : "text"}
         size={isPuzzleFinished ? "large" : "small"}
       >

@@ -5,10 +5,10 @@ import { SudokuProvider } from "./context/app-context"
 
 const theme = createTheme({
   typography: {
-    fontFamily: "Plus Jakarta Sans, arial, sans-serif",
+    fontFamily: "Inter, arial, sans-serif",
     h1: {
-      fontWeight: 700,
-      fontSize: "5rem",
+      fontWeight: 500,
+      fontSize: "4rem",
     },
     h2: {
       fontSize: "3rem",
@@ -19,7 +19,7 @@ const theme = createTheme({
     },
     button: {
       letterSpacing: ".5px",
-      color: "#EAE0D5",
+      color: "#4F60AE",
     },
     subtitle2: {
       color: "#888888",

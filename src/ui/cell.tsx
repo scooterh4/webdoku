@@ -60,16 +60,16 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
 
   const backgroundColor =
     revealCell || cellData.isCorrect
-      ? "lightgreen"
+      ? "#8BC57E"
       : isConflict ||
         (typeof cellData.isCorrect === "boolean" && !cellData.isCorrect)
-      ? "lightsalmon"
+      ? "#C57E8B"
       : cellData.isSelected
       ? "gold"
       : cellData.isSameValueAsSelect
-      ? "#7ACBE7"
+      ? "#7E8BC5"
       : cellData.isPeer
-      ? "#CDEBF6"
+      ? "#CED3E9"
       : cellData.prefilled
       ? "lightgray"
       : "transparent"
