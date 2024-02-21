@@ -1,21 +1,25 @@
 import { ToastContainer } from "react-toastify"
 import AppLayout from "./ui/app-layout"
-import { Container, ThemeProvider, createTheme } from "@mui/material"
+import { ThemeProvider, createTheme } from "@mui/material"
 import { SudokuProvider } from "./context/app-context"
 
 const theme = createTheme({
   typography: {
     fontFamily: "Inter, arial, sans-serif",
     h1: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: "4rem",
     },
     h2: {
       fontSize: "3rem",
     },
     h3: {
-      fontSize: "2.5rem",
+      fontSize: "2rem",
       fontWeight: 500,
+    },
+    h4: {
+      fontSize: "1rem",
+      fontWeight: 300,
     },
     button: {
       letterSpacing: ".5px",
@@ -54,14 +58,12 @@ const theme = createTheme({
 
 function App() {
   return (
-    <Container maxWidth={"md"}>
-      <ThemeProvider theme={theme}>
-        <ToastContainer position="top-center" theme="colored" />
-        <SudokuProvider>
-          <AppLayout />
-        </SudokuProvider>
-      </ThemeProvider>
-    </Container>
+    <ThemeProvider theme={theme}>
+      <ToastContainer position="top-center" theme="colored" />
+      <SudokuProvider>
+        <AppLayout />
+      </SudokuProvider>
+    </ThemeProvider>
   )
 }
 

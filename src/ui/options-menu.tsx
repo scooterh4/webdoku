@@ -1,6 +1,14 @@
-import React from "react"
+import React, { useState } from "react"
 import LinearScaleIcon from "@mui/icons-material/LinearScale"
-import { IconButton, Menu, MenuItem } from "@mui/material"
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material"
 import { useSudokuAPI } from "../context/app-context"
 
 interface props {
@@ -17,6 +25,8 @@ export default function OptionsMenu({ disabled }: props) {
   } = useSudokuAPI()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+  const [showDialog, setShowDialog] = useState<boolean>(false)
+  const { getNewGame } = useSudokuAPI()
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -51,6 +61,11 @@ export default function OptionsMenu({ disabled }: props) {
     setAnchorEl(null)
   }
 
+  const onStartNewGame = () => {
+    getNewGame()
+    setShowDialog(false)
+  }
+
   return (
     <>
       <IconButton
@@ -70,6 +85,7 @@ export default function OptionsMenu({ disabled }: props) {
         onClose={handleClose}
         MenuListProps={{
           "aria-labelledby": "basic-button",
+          sx: { backgroundColor: "white" },
         }}
       >
         <MenuItem onClick={onCheckCell}>Check cell</MenuItem>
@@ -77,7 +93,15 @@ export default function OptionsMenu({ disabled }: props) {
         <MenuItem onClick={onCheckPuzzle}>Check puzzle</MenuItem>
         <MenuItem onClick={onRevealPuzzle}>Reveal puzzle</MenuItem>
         <MenuItem onClick={onResetPuzzle}>Reset puzzle</MenuItem>
+        <MenuItem onClick={() => setShowDialog(true)}>New game</MenuItem>
       </Menu>
+      <Dialog open={showDialog}>
+        <DialogTitle>Are you sure you want to start a new game?</DialogTitle>
+        <DialogActions>
+          <Button onClick={onStartNewGame}>Yes</Button>
+          <Button onClick={() => setShowDialog(false)}>No</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

@@ -72,7 +72,7 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
       ? "#CED3E9"
       : cellData.prefilled
       ? "lightgray"
-      : "transparent"
+      : "white"
 
   console.log("cell render")
 
@@ -83,7 +83,7 @@ const Cell: React.FC<CellProps> = React.memo(({ cellData, revealCell }) => {
       borderRight={cellBorder.right}
       borderTop={cellBorder.top}
       borderBottom={cellBorder.bottom}
-      width={xsScreen ? 30 : 45}
+      width={xsScreen ? 31 : 45}
       height={xsScreen ? 35 : 45}
       display="flex"
       justifyContent="center"

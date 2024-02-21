@@ -4,6 +4,7 @@ import {
   useIsPuzzleFinishedContext,
   useSudokuAPI,
 } from "../context/app-context"
+import { Typography } from "@mui/material"
 
 export default function NumericKeypad() {
   const isPuzzleFinished = useIsPuzzleFinishedContext()
@@ -15,7 +16,13 @@ export default function NumericKeypad() {
   }
 
   return (
-    <Grid container marginTop={2} spacing={1}>
+    <Grid
+      container
+      spacing={1}
+      rowSpacing={0}
+      width={{ md: 350, sm: 450, xs: 320 }}
+      height={200}
+    >
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
         <Grid item xs={4} key={number}>
           <Button
@@ -23,8 +30,12 @@ export default function NumericKeypad() {
             fullWidth
             onClick={() => handleButtonClick(number)}
             disabled={isPuzzleFinished}
+            sx={{
+              border: 2,
+              height: "100%",
+            }}
           >
-            {number}
+            <Typography variant="h3">{number}</Typography>
           </Button>
         </Grid>
       ))}

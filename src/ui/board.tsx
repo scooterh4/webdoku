@@ -21,6 +21,8 @@ const Board: React.FC = () => {
           key={`row-${rowIndex}`}
           container
           direction="row"
+          // maxWidth={350}
+          // minWidth={250}
           display={"flex"}
         >
           {row.map((cellData, colIndex) => (
