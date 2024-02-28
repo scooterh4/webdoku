@@ -1,7 +1,7 @@
 import Board from "./board"
 import Actions from "./actions"
 import NumericKeypad from "./numeric-keypad"
-import { Grid, Typography } from "@mui/material"
+import { CircularProgress, Grid, Typography } from "@mui/material"
 import {
   useIsPuzzleFinishedContext,
   useLoadingContext,
@@ -19,10 +19,6 @@ export default function AppLayout() {
       gridAutoRows={"120px"}
       alignItems={"center"}
       rowSpacing={2}
-      sx={{
-        backgroundColor: "background.default",
-        minHeight: "100vh",
-      }}
     >
       <Typography
         gridRow={"1"}
@@ -40,6 +36,12 @@ export default function AppLayout() {
         gridRow={{ md: "span 5", sm: "span 6", xs: "span 5" }}
         display={"flex"}
       >
+        {isLoading && (
+          <Grid item xs={12} textAlign={"center"}>
+            <CircularProgress color={"primary"} size={100} thickness={5} />
+          </Grid>
+        )}
+
         {isPuzzleFinished && !isLoading && (
           <Grid
             item
@@ -51,30 +53,35 @@ export default function AppLayout() {
             <NewGameButton />
           </Grid>
         )}
-        <Grid
-          container
-          item
-          justifyContent={{ md: "end", xs: "center" }}
-          md={6}
-          xs={12}
-          marginBottom={{ md: 0, xs: 2 }}
-          zIndex={1}
-        >
-          <Board />
-        </Grid>
 
-        <Grid
-          container
-          item
-          justifyContent={"center"}
-          alignItems={"center"}
-          md={6}
-          xs={12}
-          zIndex={0}
-        >
-          <Actions />
-          <NumericKeypad />
-        </Grid>
+        {!isLoading && (
+          <>
+            <Grid
+              container
+              item
+              justifyContent={{ md: "end", xs: "center" }}
+              md={6}
+              xs={12}
+              marginBottom={{ md: 0, xs: 2 }}
+              zIndex={1}
+            >
+              <Board />
+            </Grid>
+
+            <Grid
+              container
+              item
+              justifyContent={"center"}
+              alignItems={"center"}
+              md={6}
+              xs={12}
+              zIndex={0}
+            >
+              <Actions />
+              <NumericKeypad />
+            </Grid>
+          </>
+        )}
       </Grid>
     </Grid>
   )
