@@ -3,7 +3,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Dependencies
-[Dosuku API](https://sudoku-api.vercel.app/)
+[Dosuku API](https://sudoku-api.vercel.app/).\
 Material UI
 
 ## Available Scripts
